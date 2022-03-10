@@ -19,7 +19,8 @@ app.use('/api/variant',require('./routes/variantsRoutes.js'));
 app.use('/api/topping',require('./routes/toppingRoutes.js'));
 app.use('/api/venue',require('./routes/venueRoutes.js'));
 app.use('/api/event',require('./routes/eventRoutes.js'));
-app.use('/api/upload',require('./routes/categoryRoutes.js'));
+const upload = require('./middleware/fileupload.js');
+app.use('/api/upload',upload,require('./routes/uploadRouter.js'));
 
 app.get('/api/helloworld',(req,res) => {
     return res.send('Hello World!').sendStatus(200);

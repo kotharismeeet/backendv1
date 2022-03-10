@@ -101,7 +101,7 @@ const updateVendor = async (req,res) => {
         const vendorExists = await Vendor.findById({_id:vendorId});
         if(!vendorExists) return res.sendStatus(403);
 
-        let vendor = await Vendor.updateOne({registered_email:registered_email},req.body);
+        let vendor = await Vendor.findByIdAndUpdate(vendorId,req.body);
 
         /*vendor.aggregate([
             {$project: {}}
@@ -109,7 +109,7 @@ const updateVendor = async (req,res) => {
 
         if(vendor) {
             return res.send({
-                
+                vendor,
                 status: 200
             });
         }

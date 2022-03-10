@@ -14,7 +14,7 @@ router.post('',createVenue);
 /**
  * api/venue/vendor/id
  */
- router.route('vendor/:venueId').post(addVendorIn).get(getVendorsByVenue).delete(deleteVendorIn);
+ router.route('/vendor/:venueId').post(addVendorIn).get(getVendorsByVenue).delete(deleteVendorIn);
 
 /**
  * api/venue/location

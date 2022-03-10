@@ -1,5 +1,6 @@
 const {VendorItem} = require('../models/Vendor.js');
 const asynchandler = require('express-async-handler');
+const { default: mongoose } = require('mongoose');
 
 // /api/vendor
 const getAllItems = asynchandler( async(req,res) => {
@@ -9,7 +10,7 @@ const getAllItems = asynchandler( async(req,res) => {
         const bool = onlyAvailable === 'true'?true:false;
         
         // logical operators
-        const searchText = req.query.searchText.toString();
+        //const searchText = req.query.searchText.toString();
         const ltePrice = req.query.maxPrice;
         const gtePrice = req.query.minPrice || 0;
         
@@ -21,13 +22,13 @@ const getAllItems = asynchandler( async(req,res) => {
         const numberOfRows = parseInt(req.query.numberOfRows);
         const pageNo = parseInt(req.query.pageNo);
 
-        console.log(searchText);
+        //console.log(searchText);
         
         const items = await VendorItem.find({
             inStock: bool,
             $lte: {price:ltePrice},
             $gte : {price:gtePrice},
-            $match: {"$item": {$regex: searchText}}
+            //$match: {"$item": {$regex: searchText}}
         }).sort({[key]:order}).skip((pageNo-1)*numberOfRows).limit(numberOfRows);   
         
 
@@ -85,9 +86,10 @@ const getItemsByCategory = asynchandler( async(req,res) => {
 const getItemsByVendor = asynchandler( async(req,res) => {
     try {
         //console.log('Im hitted!');
-        const vendorId = req.params.vendorId;
+        let vendorId = req.params.vendorId;
+        vendorId = mongoose.Types.ObjectId(req.params.vendorId);
 
-        let items = await VendorItem.aggregate([            
+        let itemsByCategory = await VendorItem.aggregate([            
             {$match: {vendor: vendorId}},
             {$lookup: {
                 from: "vendorcategories",
@@ -98,15 +100,18 @@ const getItemsByVendor = asynchandler( async(req,res) => {
             {$group:{
                 "_id":"$category",
                 "count":{"$sum":1},
-                "items":{"$push":"$item"},
-                "parentName":{"$push":"$categoryDetails"}
-            }},                                         
+                "menuItems":{"$push":"$$ROOT"},
+                "categoryObj":{"$addToSet":"$categoryDetails"}
+            }},
+            {$project: {"menuItems.categoryDetails":0,"menuItems.vendor":0,"menuItems.category":0}},
+            {$addFields: {"name" : "$categoryObj.categoryName"}},
+            //{$project: {"categoryObj":0}},
         ]);
         // parentName[0][0].categoryName
         
         return res.send({
-            items,
-            status: 200
+            itemsByCategory
+            
         });  
     } catch (error) {
         console.log(error);
@@ -156,13 +161,14 @@ const addItem = asynchandler( async(req,res) => {
 
 const updateItem = asynchandler( async(req,res) => {
     try {
+        console.log('Hi');
         const _id = req.params.itemId;
         const obj = req.body;
 
         let item = await VendorItem.findById({_id});
         if(!item) return res.sendStatus(400);
 
-        item = await VendorItem.updateOne({_id},obj);
+        item = await VendorItem.findByIdAndUpdate({_id},obj);
         return res.json({
             item,
             status: 200

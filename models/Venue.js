@@ -21,7 +21,15 @@ const venueSchema = mongoose.Schema({
         type: String, 
         required: true,
     //enum: COUNTRIES.map(country => country.name) 
-    } 
+    },
+    zoneIdentifier: {type: String, required: true}, 
+    zoneName: [{
+        subZoneName: {type: String}
+    }],vendors: [{ 
+        type:mongoose.Schema.Types.ObjectId, 
+        required: true, 
+        ref: Vendor,
+    }] 
 },{
     timestamps: true
 }); 

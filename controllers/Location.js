@@ -1,4 +1,4 @@
-const {EventLocation} = require('../models/Event');
+const {Event} = require('../models/Event');
 
 
 /**
@@ -7,13 +7,14 @@ const {EventLocation} = require('../models/Event');
  */
  const deleteLocation = async(req,res) => {
     try {
-        await EventLocation.updateOne({
-            event: req.params.id,
-            zoneIdentifier:req.body.zoneIdentifier,
-        },
-        {
-            $pull:{zoneName:req.body.zoneName}
-        })
+        await Event.updateOne(
+            {
+                _id: req.params.id
+            },
+            {
+                $pull:{zoneName:req.body.zoneName}
+            }
+        )
         res.sendStatus(200)
     } catch (error) {
         console.log(error);
@@ -31,13 +32,11 @@ const {EventLocation} = require('../models/Event');
  */
  const addLocation = async(req,res) => {
     try {
-        const location = await EventLocation.updateOne(
+        const location = await Event.updateOne(
+            {_id:req.params.id},
             {
-                event: req.params.id,
-                zoneIdentifier:req.body.zoneIdentifier
-            },
-            {
-                $push:{zoneName:req.body.zoneName}
+                zoneIdentifier: req.body.zoneIdentifier,
+                zoneName:req.body.zoneName
             })
         res.send(location)
     } catch (error) {
@@ -55,7 +54,7 @@ const {EventLocation} = require('../models/Event');
  */
  const getLocationsByEvent = async(req,res) => {
     try {
-        const locations = await EventLocation.findById(req.params.id)
+        const locations = await Event.findById(req.params.id);
         res.send(locations)
     } catch (error) {
         console.log(error);

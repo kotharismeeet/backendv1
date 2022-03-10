@@ -9,6 +9,7 @@ const {VenueVendor} = require('../models/Venue.js');
         // venue or venue
         const venueId = req.params.venueId;
         const {vendorId} = req.body;
+        console.log(venueId,vendorId);
         const newVendor = await VenueVendor.updateOne(
             {venue: venueId},
             {"$push":{vendors: vendorId}}

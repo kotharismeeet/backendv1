@@ -1,4 +1,4 @@
-const {Event,EventZone,EventZoneVendor} = require('../models/Event');
+const {Event} = require('../models/Event');
 
 /**
  * ROUTE : /api/vendor/all
@@ -10,7 +10,7 @@ const getAll = async(req,res) => {
         pages = pages-1
         const records = parseInt(req.query.recordsPerPage)
         // const key = req.query.key
-        const pass = req.query.pass
+        const pass = req.query.pass.toString();
         // const order = req.query.order
         const events = await Event.aggregate([
             {$match: {name :{$regex: pass, $options: "i"}}},
@@ -18,7 +18,7 @@ const getAll = async(req,res) => {
             {$limit: records},
 
         ])
-        res.json([events,{"total records":events.length}])
+        res.json([events,{"count":events.length}])
     } catch (error) {
         console.log(error);
         res.json({
@@ -34,7 +34,8 @@ const getAll = async(req,res) => {
  */
  const getEvent = async(req,res) => {
     try {
-        const events = await Event.find(req.params.id) 
+        const eventId = req.params.id;
+        const events = await Event.findById(eventId); 
         res.json(events)
     } catch (error) {
         console.log(error);
@@ -86,7 +87,8 @@ const getAll = async(req,res) => {
  */
  const deleteEvent = async(req,res) => {
     try {
-        await Event.findByIdAndDelete(req.params.id)
+        const eventId = req.params.id;
+        await Event.findByIdAndDelete(eventId);
         res.sendStatus(200)
     } catch (error) {
         console.log(error);

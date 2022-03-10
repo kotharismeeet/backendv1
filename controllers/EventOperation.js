@@ -1,4 +1,5 @@
-const {EventVendor} = require('../models/Event.js');
+const { default: mongoose } = require('mongoose');
+const {Event} = require('../models/Event.js');
 
 /**
  * ROUTE : cant be decided
@@ -9,8 +10,8 @@ const {EventVendor} = require('../models/Event.js');
         // event or venue
         const eventId = req.params.eventId;
         const {vendorId} = req.body;
-        const newVendor = await EventVendor.updateOne(
-            {event: eventId},
+        const newVendor = await Event.updateOne(
+            {_id: eventId},
             {"$push":{vendors: vendorId}}
         );
         if(newVendor) res.json({
@@ -35,8 +36,8 @@ const {EventVendor} = require('../models/Event.js');
         // event or venue
         const eventId = req.params.eventId;
         const {vendorId} = req.body;
-        const deletedVendor = await EventVendor.updateOne(
-            {event: eventId},
+        const deletedVendor = await Event.updateOne(
+            {_id: eventId},
             {"$pull":{vendors: vendorId}}
         );
         if(deletedVendor) res.json({
@@ -54,11 +55,13 @@ const {EventVendor} = require('../models/Event.js');
 
 const getVendorsByEvent = async(req,res)=>{
     try {
-        const eventId = req.params.eventId;
+        let eventId = mongoose.Types.ObjectId(req.params.eventId);
         //const {vendorId} = req.body;
-        const vendors = await EventVendor.find(
-            {event: eventId}
-        );
+        const vendors = await Event.aggregate([
+            {$match : {_id: eventId}},
+            {$project: {vendors: 1}},
+            {$project:{_id:0}}
+        ]);
         if(vendors) return res.json({
             vendors,
             satus:200

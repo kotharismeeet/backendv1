@@ -18,10 +18,10 @@ const vendorSchema = mongoose.Schema({
     country : {type: String, required: true}, 
     postal_code : {type: String, required: true}, 
     contact_no : {type: Number, required : true},    
-    serviceTypes:{
+    serviceTypes:[{
         type: String,
         enum: ['On Site Delivery','Collection','Home Delivery']
-    }, 
+    }], 
     // https://docs.mongodb.com/manual/geospatial-queries/
     // co-ordinate library for frontend : https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/getCurrentPosition
     location: {

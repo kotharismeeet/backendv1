@@ -1,9 +1,12 @@
-const {VenueLocation} = require('../models/Venue.js');
+const {Venue} = require('../models/Venue.js');
 
 
 const getAllVenueLocations = async(req,res) => { 
     try {
-        const allVenueLocations=await VenueLocation.find({vendor:req.params.id},{zoneIdentifier:1,zoneName:1});
+        const allVenueLocations=await Venue.find(
+            {_id:req.params.id},
+            {zoneIdentifier:1,zoneName:1}
+        );
         res.status(200).json(allVenueLocations);
         
     } catch (error) {
@@ -17,13 +20,12 @@ const getAllVenueLocations = async(req,res) => {
 
 const deleteVenueLocation = async(req,res) => {
     try {
-        const venueLocation=await VenueLocation.findById(req.params.id)
+        const venueLocation=await Venue.findByIdAndDelete(req.params.id)
         //If venue location is not found
         if(!venueLocation){
             res.send(400)
             throw new Error('Venue Location not found')
         }
-        await venueLocation.remove()
         res.status(200).json({id:req.params.id})
     } catch (error) {
         console.log(error);
@@ -36,16 +38,14 @@ const deleteVenueLocation = async(req,res) => {
 
 const createVenueLocation = async(req,res) => {
     try {
-        const venueLocation = await VenueLocation.updateOne(
+        const venueLocation = await Venue.updateOne(
             {
-                venue:req.params.id,
-                zoneIdentifier:req.body.zoneIdentifier,
-
+                _id:req.params.id,
             },
-            {$push:
-                {zoneName:req.body.zoneName}
+            {
+                zoneIdentifier: req.body.zoneIdentifier,
+                zoneName:req.body.zoneName
             }
-
         )
        res.status(200).json(venueLocation)
     } catch (error) {

@@ -15,8 +15,7 @@ router.post('',addEvent);
  *  api/event/location
  */
 //router.get('/location/all',getAllLocation);
-router.route('/location/:id').get(getLocationsByEvent).delete(deleteLocation);
-router.route('/location/:id').post(addLocation);
+router.route('/location/:id').get(getLocationsByEvent).delete(deleteLocation).post(addLocation);;
 
 /*
  imp get zone of events
@@ -28,5 +27,5 @@ router.route('/location/:id').post(addLocation);
  * api/event/zone/vendor/id
  */
 
-router.route('vendorinevent/:eventId').post(addVendorIn).delete(deleteVendorIn).get(getVendorsByEvent);
+router.route('/vendorinevent/:eventId').post(addVendorIn).delete(deleteVendorIn).get(getVendorsByEvent);
 module.exports = router;

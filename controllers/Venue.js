@@ -24,7 +24,8 @@ const getAll = async(req,res) => {
 
 const getVenue = async(req,res) => {
     try {
-        const venue=await Venue.findById(req.params.id);
+        const venueId = req.params.id;
+        const venue=await Venue.findById(venueId);
         //If venue not found
         if(!venue){             
             res.send(400)
@@ -47,14 +48,14 @@ const getVenue = async(req,res) => {
 
  const deleteVenue = async(req,res) => {
     try {
-        const venue=await Venue.findById(req.params.id)
+        const venueId = req.params.id;
+        const venue=await Venue.findByIdDelete(venueId)
         //If venue is not found
         if(!venue){
             res.send(400)
             throw new Error('Venue not found')
         }
-        await venue.remove()
-        res.status(200).json({id:req.params.id})
+        res.status(200);
     } catch (error) {
         console.log(error);
         res.json({
@@ -96,17 +97,7 @@ const getVenue = async(req,res) => {
 
  const createVenue = async(req,res) => {
     try {
-        const venue = await Venue.create({
-        name:req.body.name,
-        location:req.body.location,
-        postcode:req.body.postcode,
-        isActive:req.body.isActive,
-        openingTime:req.body.openingTime,
-        closingTime:req.body.closingTime,
-        address:req.body.address,
-        city:req.body.city,
-        country:req.body.country
-        })
+        const venue = await Venue.create(req.body);
        res.status(200).json(venue)
     } catch (error) {
         console.log(error);

@@ -24,7 +24,16 @@ const eventSchema = mongoose.Schema({
         type: Boolean, 
         required: true, 
         default: true 
-    } 
+    } ,
+    zoneIdentifier: {type: String, required: true}, 
+    zoneName: [{
+        subZoneName: {type: String}
+    }],vendors: [
+        { 
+            type:mongoose.Schema.Types.ObjectId,              
+            ref: Vendor,
+        }
+    ]
 }); 
 
 const Event = mongoose.model('Event',eventSchema);    

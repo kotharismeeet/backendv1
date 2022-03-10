@@ -4,7 +4,7 @@ const asyncHandler = require('express-async-handler');
 const {S3_BUCKET} = require('../utilities/aws.js');
 const getParams = require('../constants/awss3params.js');
 
-router.post('/upload', asyncHandler((req,res) => {
+router.post('', asyncHandler((req,res) => {
 
     try {
         //console.log(S3_BUCKET);
